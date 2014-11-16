@@ -4,15 +4,18 @@
 #include <sys/time.h>
 #include <unistd.h>
 #include <sys/select.h>
+#include <sys/ioctl.h>
+#include <stdlib.h>
+#include "servix_global.h"
 
 
 /*===========================================================
  * servix_socket
  *========================================================*/
 
-enum sock_type {
-	ST_UDP ,
-	ST_TCP
+enum socket_type {
+	SOCK_TCP ,
+	SOCK_UDP ,
 } ;
 
 /*	name : svx_socket
@@ -24,8 +27,8 @@ struct svx_socket {
 
 	int		m_sock ;	// socket fd
 	
-	int		m_isblock:1 ;	// socket is block
-	int		m_ispush:1 ;	// socket is push
+	int		m_isnoblock:1 ;	// socket is block
+	int		m_isnopush:1 ;	// socket is push
 	int		m_isudp:1 ;		// socket is type of udp
 	int		m_istcp:1 ;		// socket is type of tcp
 } ;
@@ -37,7 +40,7 @@ typedef struct svx_socket svx_socket ;
  *	para : 
  *	function : create a svx_socket
  */
-int			svx_sock_create () ;
+svx_socket	*svx_sock_create (int type, svx_socket *sock) ;
 
 
 /*	name : svx_sock_isblock
@@ -45,7 +48,7 @@ int			svx_sock_create () ;
  *	para : variable typed svx_socket
  *	function : check if a svx_socket is blocking
  */
-svx_bool_t	svx_sock_isblock (svx_socket *psock)
+svx_bool	svx_sock_isblock (svx_socket *psock) ;
 
 
 /*	name : svx_sock_setblock
@@ -53,7 +56,7 @@ svx_bool_t	svx_sock_isblock (svx_socket *psock)
  *	para : variable typed svx_socket
  *	function : set a svx_socket to blocking
  */
-int			svx_sock_setblock (svx_socket *psock)
+int			svx_sock_setblock (svx_socket *psock) ;
 
 
 /*	name : svx_sock_setnoblock
@@ -61,7 +64,7 @@ int			svx_sock_setblock (svx_socket *psock)
  *	para : variable typed svx_socket
  *	function : set a svx_socket to no-blocking
  */
-int			svx_sock_setnoblock (svx_socket *psock)
+int			svx_sock_setnoblock (svx_socket *psock) ;
 
 
 /*	name : svx_sock_ispush
@@ -69,23 +72,18 @@ int			svx_sock_setnoblock (svx_socket *psock)
  *	para : variable typed svx_socket
  *	function : check if a svx_socket is push
  */
-svx_bool_t	svx_sock_ispush (svx_socket *psock)
-
-
-/*	name : svx_sock_nopush
+svx_bool	svx_sock_ispush (svx_socket *psock) ; 
+/*	name : svx_sock_nopush 
  *	author : klin
  *	para : variable typed svx_socket
- *	function : set a svx_socket to no-pushing
- */
-int			svx_sock_setnopush (svx_socket *psock)
-
-
+ *	function : set a svx_socket to no-pushing */
+ int			svx_sock_setnopush (svx_socket *psock) ;
 /*	name : svx_sock_push
  *	author : klin
  *	para : variable typed svx_socket
  *	function : set a svx_socket to pushing
  */
-int			svx_sock_setpush (svx_socket *psock)
+int			svx_sock_setpush (svx_socket *psock) ;
 
 
 
@@ -106,7 +104,7 @@ struct svx_addr {
 	int					m_family ;  // address family
 	int					m_port ;	// port
 
-	svx_str_t			m_ip_dot;	// ip address by dotation
+	char				*m_ip_dot;	// ip address by dotation
 } ;
 
 typedef struct svx_addr svx_addr ;
@@ -117,6 +115,5 @@ typedef struct svx_addr svx_addr ;
  *	para : dot notation
  *	function : create a svx_addr by a IPv4 address in dot notation
  */
-int
-svx_addrv4_create (const char *dotation, int port, svx_addr *addr) ;
+svx_addr *svx_addrv4_create (const char *dotation, int port, svx_addr *addr) ;
 

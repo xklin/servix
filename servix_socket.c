@@ -1,13 +1,14 @@
+#include "servix_socket.h"
 
 /*	name : svx_sock_isblock
  *	author : klin
  *	para : variable typed svx_socket
  *	function : check if a svx_socket is blocking
  */
-svx_bool_t
+svx_bool
 svx_sock_isblock (svx_socket *psock)
 {
-	return (svx_bool_t)psock->m_isblock ;
+	return !(psock->m_isnoblock) ;
 }
 
 
@@ -21,7 +22,7 @@ svx_sock_setblock (svx_socket *psock)
 {
 	int nb = 0 ;
 
-	if (1 == psock->m_isblock)
+	if (1 == psock->m_isnoblock)
 		return 0 ;
 
 	return ioctl (psock->m_sock, FIONBIO, &nb) ;
@@ -38,7 +39,7 @@ svx_sock_setnoblock (svx_socket *psock)
 {
 	int nb = 1 ;
 
-	if (0 == psock->m_isblock)
+	if (0 == psock->m_isnoblock)
 		return 0 ;
 
 	return ioctl (psock->m_sock, FIONBIO, &nb) ;
@@ -50,10 +51,10 @@ svx_sock_setnoblock (svx_socket *psock)
  *	para : variable typed svx_socket
  *	function : check if a svx_socket is push
  */
-svx_bool_t
+svx_bool
 svx_sock_ispush (svx_socket *psock)
 {
-	return (svx_bool_t)psock->m_ispush ;
+	return !((svx_bool)psock->m_isnopush) ;
 }
 
 
@@ -67,11 +68,12 @@ svx_sock_setnopush (svx_socket *psock)
 {
 	int cork = 1 ;
 
-	if (0 == psock->m_ispush)
+	if (0 == psock->m_isnopush)
 		return 0 ;
 
-	return setsockopt (psock->m_sock, IPPROTO_TCP, TCP_CORK,
+/*	return setsockopt (psock->m_sock, IPPROTO_TCP, TCP_CORK,
 					(const void*)cork, sizeof (int)) ;
+*/
 }
 
 
@@ -85,12 +87,12 @@ svx_sock_setpush (svx_socket *psock)
 {
 	int cork = 0 ;
 
-	if (1 == psock->m_ispush)
+	if (1 == psock->m_isnopush)
 		return 0 ;
 
-	return setsockopt(psock->m_sock, IPPROTO_TCP, TCP_CORK, 
+	/*return setsockopt(psock->m_sock, IPPROTO_TCP, TCP_CORK, 
 					(const void *) &cork, sizeof(int));
-
+	*/
 }
 
 /*	name : svx_sock
@@ -109,12 +111,12 @@ svx_sock_create (int type, svx_socket *sock)
 		svxe_exit () ;
 
 	switch (type) {
-		case ST_TCP :
-			_type = STREAM ;
+		case SOCK_TCP :
+			_type = SOCK_STREAM ;
 			sock->m_istcp = 1 ;
 			break ;
-		case ST_UDP :
-			_type = DGRAM ;
+		case SOCK_UDP :
+			_type = SOCK_DGRAM ;
 			sock->m_isudp = 1 ;
 			break ;
 		default :
@@ -140,17 +142,17 @@ svx_addrv4_create (const char *ip_dot, int port, svx_addr *addr)
 	 * 	if (svx_ip_valid_dot (ip_dot))
 	 */
 	if (NULL == addr)
-		addr = svx_malloc (sizeof (svx_addr)) ;
+		addr = malloc (sizeof (svx_addr)) ;
 
 	addr->m_ip_dot = ip_dot ;
 	addr->m_port = port ;
 	addr->m_family = AF_INET ;
 
-	if (0 > inet_pton (AF_INET, ip_dot, &addr->m_addr.sin_addr))
+	if (0 > inet_pton (AF_INET, ip_dot, &addr->m_addr->sin_addr))
 		svxe_exit () ;
 
-	addr->m_addr.sin_family = addr->m_family ;
-	addr->m_addr.sin_port = htons (port) ;
+	addr->m_addr->sin_family = addr->m_family ;
+	addr->m_addr->sin_port = htons (port) ;
 	addr->m_socklen = (socklen_t) sizeof(struct sockaddr_in) ;
 	return addr ;
 }
@@ -169,7 +171,7 @@ svx_connect (svx_socket *sock, svx_addr *peer_addr)
 {
 	assert (sock != NULL && peer_addr != NULL) ;
 
-	if (0 > connect (sock->m_sock, peer_addr->m_addr,
+	if (0 > connect (sock->m_sock, &peer_addr->m_addr,
 			peer_addr->m_socklen)) {
 
 		perror ("ERROR") ;
@@ -185,22 +187,20 @@ svx_connect (svx_socket *sock, svx_addr *peer_addr)
  *	function : send data to peer socket
  */
 int
-svx_send (svx_socket *sock, svx_addr *peer_addr, svx_buff_t *buf)
+svx_send (svx_socket *sock, svx_addr *peer_addr, svx_buff *buf)
 {
 	int ret ;
 	assert (NULL != sock, NULL != peer_addr) ;
 
-	ret = send (sock->m_sock, buf->data, buf->len, 0) ;
+	ret = send (sock->m_sock, buf->m_data, buf->m_len, 0) ;
 	if (0 > ret) {
 		perror ("ERROR") ;
 		return -1 ;
 	}
 
-	buf->len -= ret ;
+	buf->m_len -= ret ;
 	return ret ;
 }
-
-
 
 
 
