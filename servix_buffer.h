@@ -1,3 +1,7 @@
+#ifndef __SERVIX_BUFFER_INCLUED__
+#define __SERVIX_BUFFER_INCLUED__
+
+
 #include "servix_global.h"
 
 struct servix_buffer {
@@ -33,3 +37,6 @@ svx_buf_destroy (svx_buff *buf) ;
 #define SVX_BUF_DECLARATION(s, n, name)\
 	char x [s * n] ;\
 	svx_buff name = {x, sizeof(x), s, n} ;
+
+
+#endif

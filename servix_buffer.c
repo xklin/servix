@@ -1,4 +1,4 @@
-
+#include "servix_global.h"
 
 /*	name : svx_buf_create
  *	para : elem_size, elem_num
@@ -18,7 +18,7 @@ svx_buf_create (int elem_num, uint32_t elem_size)
 		return NULL ;
 	}
 
-	buffer->data = m_data ;
+	buffer->m_data = data ;
 	buffer->m_len = elem_num * elem_size ;
 	buffer->m_elem_size = elem_size ;
 	buffer->m_elem_num = elem_num ;

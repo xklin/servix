@@ -106,7 +106,7 @@ svx_sock_create (int type, svx_socket *sock)
 	int _type ;
 
 	if (NULL == sock)
-		sock = svx_malloc (sizeof (svx_socket)) ;
+		sock = malloc (sizeof (svx_socket)) ;
 	if (NULL == sock)
 		svxe_exit () ;
 
@@ -125,7 +125,7 @@ svx_sock_create (int type, svx_socket *sock)
 	// initialize the whole socket
 	memset (sock, 0, sizeof (svx_socket)) ;
 
-	sock->m_sock = Socket (AF_INET, _type, 0) ;
+	sock->m_sock = socket (AF_INET, _type, 0) ;
 	return sock ;
 }
 
@@ -190,7 +190,7 @@ int
 svx_send (svx_socket *sock, svx_addr *peer_addr, svx_buff *buf)
 {
 	int ret ;
-	assert (NULL != sock, NULL != peer_addr) ;
+	assert (NULL != sock && NULL != peer_addr) ;
 
 	ret = send (sock->m_sock, buf->m_data, buf->m_len, 0) ;
 	if (0 > ret) {
