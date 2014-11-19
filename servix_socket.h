@@ -1,7 +1,11 @@
-
-#ifndef __SERVIX_SOCKET_INCLUDED__
-#define __SERVIX_SOCKET_INCLUDED__ 
-
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <arpa/inet.h>
+#include <sys/time.h>
+#include <unistd.h>
+#include <sys/select.h>
+#include <sys/ioctl.h>
+#include <stdlib.h>
 #include "servix_global.h"
 
 
@@ -19,15 +23,17 @@ enum socket_type {
  *	para :
  *	function : The base socket data structure
  */
-struct servix_socket {
+struct svx_socket {
 
 	int		m_sock ;	// socket fd
 	
-	unsigned		m_isnoblock:1 ;	// socket is block
-	unsigned		m_isnopush:1 ;	// socket is push
-	unsigned		m_isudp:1 ;		// socket is type of udp
-	unsigned		m_istcp:1 ;		// socket is type of tcp
+	int		m_isnoblock:1 ;	// socket is block
+	int		m_isnopush:1 ;	// socket is push
+	int		m_isudp:1 ;		// socket is type of udp
+	int		m_istcp:1 ;		// socket is type of tcp
 } ;
+
+typedef struct svx_socket svx_socket ;
 
 /*	name : svx_sock
  *	author : klin
@@ -91,7 +97,7 @@ int			svx_sock_setpush (svx_socket *psock) ;
  *	para :
  *	function : servix address data structure
  */
-struct servix_addr {
+struct svx_addr {
 
 	struct sockaddr_in	*m_addr ;	// main address
 	socklen_t			m_socklen ;	// length of the addr
@@ -101,13 +107,13 @@ struct servix_addr {
 	char				*m_ip_dot;	// ip address by dotation
 } ;
 
+typedef struct svx_addr svx_addr ;
+
 
 /*	name : svx_addrv4_create
  *	author : klin
  *	para : dot notation
  *	function : create a svx_addr by a IPv4 address in dot notation
  */
-svx_addr *svx_addrv4_create (char *dotation, int port, svx_addr *addr) ;
+svx_addr *svx_addrv4_create (const char *dotation, int port, svx_addr *addr) ;
 
-
-#endif

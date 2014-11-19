@@ -1,4 +1,4 @@
-#include "servix_global.h"
+#include "servix_socket.h"
 
 /*	name : svx_sock_isblock
  *	author : klin
@@ -8,7 +8,7 @@
 svx_bool
 svx_sock_isblock (svx_socket *psock)
 {
-	return !(int)(psock->m_isnoblock) ;
+	return !(psock->m_isnoblock) ;
 }
 
 
@@ -106,7 +106,7 @@ svx_sock_create (int type, svx_socket *sock)
 	int _type ;
 
 	if (NULL == sock)
-		sock = malloc (sizeof (svx_socket)) ;
+		sock = svx_malloc (sizeof (svx_socket)) ;
 	if (NULL == sock)
 		svxe_exit () ;
 
@@ -125,7 +125,7 @@ svx_sock_create (int type, svx_socket *sock)
 	// initialize the whole socket
 	memset (sock, 0, sizeof (svx_socket)) ;
 
-	sock->m_sock = socket (AF_INET, _type, 0) ;
+	sock->m_sock = Socket (AF_INET, _type, 0) ;
 	return sock ;
 }
 
@@ -136,7 +136,7 @@ svx_sock_create (int type, svx_socket *sock)
  *	function : create a svx_addr
  */
 svx_addr *
-svx_addrv4_create (char *ip_dot, int port, svx_addr *addr)
+svx_addrv4_create (const char *ip_dot, int port, svx_addr *addr)
 {
 	/*
 	 * 	if (svx_ip_valid_dot (ip_dot))
@@ -190,7 +190,7 @@ int
 svx_send (svx_socket *sock, svx_addr *peer_addr, svx_buff *buf)
 {
 	int ret ;
-	assert (NULL != sock &&  NULL != peer_addr) ;
+	assert (NULL != sock, NULL != peer_addr) ;
 
 	ret = send (sock->m_sock, buf->m_data, buf->m_len, 0) ;
 	if (0 > ret) {
