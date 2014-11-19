@@ -203,4 +203,14 @@ svx_send (svx_socket *sock, svx_addr *peer_addr, svx_buff *buf)
 }
 
 
+/*	name : svx_listen
+ *	para : sock, addr
+ *	function : bind and listen
+ */
+int
+svx_listen (svx_socket *sock, svx_addr *addr)
+{
+	
+}
+
 
