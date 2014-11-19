@@ -1,6 +1,6 @@
 
-#ifndef __SERVIX_SOCKET_INCLUDED__
-#define __SERVIX_SOCKET_INCLUDED__ 
+#ifndef __SERVIX_SOCKET_INCLUED__
+#define __SERVIX_SOCKET_INCLUED__
 
 #include "servix_global.h"
 
@@ -23,11 +23,12 @@ struct servix_socket {
 
 	int		m_sock ;	// socket fd
 	
-	unsigned		m_isnoblock:1 ;	// socket is block
-	unsigned		m_isnopush:1 ;	// socket is push
-	unsigned		m_isudp:1 ;		// socket is type of udp
-	unsigned		m_istcp:1 ;		// socket is type of tcp
+	unsigned	m_isnoblock:1 ;	// socket is block
+	unsigned	m_isnopush:1 ;	// socket is push
+	unsigned	m_isudp:1 ;		// socket is type of udp
+	unsigned	m_istcp:1 ;		// socket is type of tcp
 } ;
+
 
 /*	name : svx_sock
  *	author : klin
@@ -102,12 +103,16 @@ struct servix_addr {
 } ;
 
 
+
 /*	name : svx_addrv4_create
  *	author : klin
  *	para : dot notation
  *	function : create a svx_addr by a IPv4 address in dot notation
  */
-svx_addr *svx_addrv4_create (char *dotation, int port, svx_addr *addr) ;
+svx_addr *svx_addrv4_create (const char *dotation, int port, svx_addr *addr) ;
+
+
 
 
 #endif
+
