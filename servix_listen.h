@@ -9,7 +9,11 @@ struct servix_listen {
 	svx_socket		*m_sock ;
 	svx_addr		*m_addr ;
 
+<<<<<<< HEAD
 	int				m_backlog ;					// queue's backlog of listening
+=======
+	int				m_backlog ;
+>>>>>>> origin/master
 	int				m_sndsz ;					// Send buffer's size
 	int				m_rcvsz ;					// Recieve buffer's size
 
