@@ -30,6 +30,9 @@ struct servix_socket {
 } ;
 
 
+#define	SVX_SOCKET_BLANK	{0, 0, 0, 0, 0}
+
+
 /*	name : svx_sock
  *	author : klin
  *	para : 
@@ -68,11 +71,15 @@ int			svx_sock_setnoblock (svx_socket *psock) ;
  *	function : check if a svx_socket is push
  */
 svx_bool	svx_sock_ispush (svx_socket *psock) ; 
+
+
 /*	name : svx_sock_nopush 
  *	author : klin
  *	para : variable typed svx_socket
  *	function : set a svx_socket to no-pushing */
  int			svx_sock_setnopush (svx_socket *psock) ;
+
+
 /*	name : svx_sock_push
  *	author : klin
  *	para : variable typed svx_socket
@@ -101,6 +108,9 @@ struct servix_addr {
 
 	char				*m_ip_dot;	// ip address by dotation
 } ;
+
+
+#define SVX_ADDR_BLANK	{NULL, 0, 0, 0, NULL}
 
 
 
