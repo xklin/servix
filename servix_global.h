@@ -27,12 +27,15 @@ typedef struct servix_array		svx_array ;
 typedef unsigned int			svx_uint32_t ;
 typedef unsigned long			svx_uint64_t ;
 typedef int						svx_bool ;
+typedef unsigned char			svx_uint8_t
+
 
 #include "servix_socket.h"
 #include "servix_buffer.h"
 #include "servix_error.h"
 #include "servix_conf.h"
 #include "servix_listen.h"
+#include "servix_array.h"
 
 
 #endif

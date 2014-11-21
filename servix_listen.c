@@ -6,11 +6,11 @@
 svx_array	svx_listen_array ;
 
 
-/*	name : svx_init_listen
+/*	name : svx_listen_init
  *	para :
  *	function : init the listen list
  */
-int svx_init_listen (char *ip, int port)
+int svx_listen_init (char *ip, int port)
 {
 	assert (NULL != conf) ;
 
@@ -39,16 +39,20 @@ int svx_init_listen (char *ip, int port)
 }
 
 
-/*	name : svx_prepare_listen
+/*	name : svx_listen_prepare
  *	para : sock, addr
  *	function : prepare listening
  */
 int
-svx_prepare_listen (svx_listen *ls)
+svx_listen_prepare (svx_listen *ls)
 {
 	assert (NULL != sock && NULL != addr && NULL != ls) ;
 
-	
+	int i ;
+
+	for (i=0; i<g_listen_array.eln; ++i) {
+		
+	}
 }
 
 
