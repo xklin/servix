@@ -9,4 +9,9 @@ struct servix_conf {
 	int		m_port ;
 } ;
 
+
+
+
+#define	SERVIX_LISTEN_BACKLOG	512
+
 #endif

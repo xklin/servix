@@ -90,9 +90,8 @@ svx_sock_setpush (svx_socket *psock)
 	if (1 == psock->m_isnopush)
 		return 0 ;
 
-	/*return setsockopt(psock->m_sock, IPPROTO_TCP, TCP_CORK, 
+	return setsockopt(psock->m_sock, IPPROTO_TCP, TCP_CORK, 
 					(const void *) &cork, sizeof(int));
-	*/
 }
 
 /*	name : svx_sock

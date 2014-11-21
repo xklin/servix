@@ -20,18 +20,11 @@ struct servix_listen {
 
 #define SVX_LISTEN_BLANK	{SVX_SOCKET_BLANK,\
 							SVX_ADDR_BLANK,\
-							-1,\
-							-1,\
-							-1,\
-							0,\
-							0}
+							-1,	-1, -1,	0, 0}
 #define SVX_LISTEN_INIT		{SVX_SOCKET_BLAN,\
 							SVX_ADDR_BLANK,\
 							SVX_LISTEN_BACKLOG,\
-							-1,\
-							-1\
-							0,\
-							0}
+							-1,	-1,	0, 0}
 
 
 /*	name : svx_prepare_listen
