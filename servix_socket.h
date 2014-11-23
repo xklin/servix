@@ -101,7 +101,7 @@ int			svx_sock_setpush (svx_socket *psock) ;
  */
 struct servix_addr {
 
-	struct sockaddr_in	*m_addr ;	// main address
+	struct sockaddr_in	m_addr ;	// main address
 	socklen_t			m_socklen ;	// length of the addr
 	int					m_family ;  // address family
 	int					m_port ;	// port

@@ -44,15 +44,54 @@ int svx_listen_init (char *ip, int port)
  *	function : prepare listening
  */
 int
-svx_listen_prepare (svx_listen *ls)
+svx_listen_prepare ()
 {
 	assert (NULL != sock && NULL != addr && NULL != ls) ;
 
 	int i ;
 
 	for (i=0; i<g_listen_array.eln; ++i) {
-		
+		svx_listen *pls = svx_array_get (&g_listen_array, i) ;
+
+		// Set the sending buffer and the recieving buffer
+		if (pls->m_sndsz != -1) {
+			if (0 > setsockopt (pls->m_sock.m_sock, SOL_SOCKET, SO_SNDBUF,
+					(const void*)&pls->m_sndsz, sizeof(pls->m_sndsz)))
+				svxe_log (LOG_ERROR, "set sending buffer failed") ;
+		}
+
+		if (pls->m_rcvsz != -1) {
+			if (0 > setsockopt (pls->m_sock.m_sock, SOL_SOCKET, SO_RCVBUF,
+					(const void*)&pls->m_rcvsz, sizeof(pls->m_rcvsz)))
+				svxe_log (LOG_ERROR, "set recieving buffer failed") ;
+		}
+
+		// Set the keepalive
+		if (pls->m_is_keepalive) {
+			int value = 1 ;
+			if (0 > setsockopt (pls->m_sock.m_sock, SOL_SOCKET, SO_KEEPALIVE,
+					(const void*)&value, sizeof(value)))
+				svxe_log (LOG_ERROR, "set socket to keepalive failed") ;
+		}
+
+		// Set the fast open
+		if (pls->m_is_fast_open) {
+			int value = 1 ;
+			if (0 > setsockopt (pls->m_sock.m_sock, IPPROTO_TCP, TCP_FASTOPEN,
+					(const void*)&value, sizeof(value)))
+				svxe_log (LOG_ERROR, "set socket to fast open failed") ;
+		}
+
+		// Set the defer accept
+		if (pls->m_is_defer_accept) {
+			int timeout = 1 ;
+			if (0 > setsockopt (pls->m_sock.m_sock, IPPROTO_TCP,
+			TCP_DEFER_ACCEPT, (const void*)timeout, sizeof(timeout)))
+				svxe_log (LOG_ERROR, "set socket to defer accept failed") ;
+		}
 	}
+
+	return 0 ;
 }
 
 

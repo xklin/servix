@@ -22,7 +22,7 @@ svx_sock_setblock (svx_socket *psock)
 {
 	int nb = 0 ;
 
-	if (1 == psock->m_isnoblock)
+	if (0 == psock->m_isnoblock)
 		return 0 ;
 
 	return ioctl (psock->m_sock, FIONBIO, &nb) ;
@@ -39,9 +39,10 @@ svx_sock_setnoblock (svx_socket *psock)
 {
 	int nb = 1 ;
 
-	if (0 == psock->m_isnoblock)
+	if (1 == psock->m_isnoblock)
 		return 0 ;
 
+	psock->m_isnoblock = 1 ;
 	return ioctl (psock->m_sock, FIONBIO, &nb) ;
 }
 
@@ -71,9 +72,9 @@ svx_sock_setnopush (svx_socket *psock)
 	if (0 == psock->m_isnopush)
 		return 0 ;
 
-/*	return setsockopt (psock->m_sock, IPPROTO_TCP, TCP_CORK,
-					(const void*)cork, sizeof (int)) ;
-*/
+	psock->m_isnopush = 1 ;
+	return setsockopt (psock->m_sock, IPPROTO_TCP, TCP_CORK,
+					(const void*)&cork, sizeof (int)) ;
 }
 
 
@@ -142,20 +143,20 @@ svx_addrv4_create (const char *ip_dot, int port, svx_addr *addr)
 	 */
 	if (NULL == addr)
 		addr = malloc (sizeof (svx_addr)) ;
+	else
+		memset (addr, 0, sizeof(svx_addr)) ;
 
 	addr->m_ip_dot = ip_dot ;
 	addr->m_port = port ;
 	addr->m_family = AF_INET ;
 
-	if (0 > inet_pton (AF_INET, ip_dot, &addr->m_addr->sin_addr))
+	if (0 > inet_pton (AF_INET, ip_dot, &addr->m_addr.sin_addr))
 		svxe_exit () ;
 
-	addr->m_addr->sin_family = addr->m_family ;
-	addr->m_addr->sin_port = htons (port) ;
+	addr->m_addr.sin_family = addr->m_family ;
+	addr->m_addr.sin_port = htons (port) ;
 	addr->m_socklen = (socklen_t) sizeof(struct sockaddr_in) ;
 	return addr ;
 }
 
 
-
-#endif
