@@ -22,7 +22,8 @@ enum socket_type {
 struct servix_socket {
 
 	int		m_sock ;	// socket fd
-	
+
+	unsigned	m_isopen:1;		// socket is openning	
 	unsigned	m_isnoblock:1 ;	// socket is block
 	unsigned	m_isnopush:1 ;	// socket is push
 	unsigned	m_isudp:1 ;		// socket is type of udp
@@ -33,60 +34,67 @@ struct servix_socket {
 #define	SVX_SOCKET_BLANK	{0, 0, 0, 0, 0}
 
 
-/*	name : svx_sock
- *	author : klin
- *	para : 
+/*	name : svx_sock_create
  *	function : create a svx_socket
  */
 svx_socket	*svx_sock_create (int type, svx_socket *sock) ;
 
 
+
+/*	name : svx_sock_destroy
+ *	function :
+		Close the socket.
+ */
+svx_errno_t	svx_sock_destroy (svx_socket *sock) ;
+
+
 /*	name : svx_sock_isblock
- *	author : klin
- *	para : variable typed svx_socket
  *	function : check if a svx_socket is blocking
  */
 svx_bool	svx_sock_isblock (svx_socket *psock) ;
 
 
 /*	name : svx_sock_setblock
- *	author : klin
- *	para : variable typed svx_socket
  *	function : set a svx_socket to blocking
  */
 int			svx_sock_setblock (svx_socket *psock) ;
 
 
 /*	name : svx_sock_setnoblock
- *	author : klin
- *	para : variable typed svx_socket
  *	function : set a svx_socket to no-blocking
  */
 int			svx_sock_setnoblock (svx_socket *psock) ;
 
 
 /*	name : svx_sock_ispush
- *	author : klin
- *	para : variable typed svx_socket
  *	function : check if a svx_socket is push
  */
 svx_bool	svx_sock_ispush (svx_socket *psock) ; 
 
 
 /*	name : svx_sock_nopush 
- *	author : klin
- *	para : variable typed svx_socket
  *	function : set a svx_socket to no-pushing */
  int			svx_sock_setnopush (svx_socket *psock) ;
 
 
 /*	name : svx_sock_push
- *	author : klin
- *	para : variable typed svx_socket
  *	function : set a svx_socket to pushing
  */
 int			svx_sock_setpush (svx_socket *psock) ;
 
+
+/*	name : svx_sock_get_sndbuf
+ *	functin : 
+		Get the socket's length of its sending buffer
+ */
+int			svx_sock_get_sndbuf (svx_socket *psock) ;
+
+
+/*	name : svx_sock_get_rcvbuf
+ *	function : 
+		Get the socket's length of its recieving buffer
+ */
+int			svx_sock_get_rcvbuf (svx_socket *psock) ;
 
 
 

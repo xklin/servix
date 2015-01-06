@@ -28,19 +28,36 @@ struct servix_listen {
 							-1,	-1,	0, 0, 0}
 
 
+/*	Sending buffer's length limitation */
+#define	SVX_TCP_SNDSZ_MAX	65535
 
-/*	name : svx_prepare_listen
- *	para : sock, addr
- *	function : prepare listen
+/*	Recieving buffer's length limitation */
+#define SVX_TCP_RCVSZ_MAX	65535
+
+
+
+/*	name : svx_listen_init
+ *	function :
+		Fill the data structure of the 'svx_listen' with
+		a variable of 'svx_config'
  */
-int svx_prepare_listen (svx_listen *listen, svx_socket *sock, svx_addr *addr) ;
+int svx_listen_init (svx_listen *pls, svx_config *conf) ;
 
 
-/*	name : svx_listen
- *	para : sock, addr
- *	fucntion : bind and listen to socket
+/*	name : svx_listen_config_tcp
+ *	function :
+		Set the options of the listen tcp socket
  */
-int	svx_listen (svx_socket *sock, svx_addr *addr) ;
+int svx_listen_config_tcp (svx_listen *pls) ;
+
+
+
+/*	name : svx_listen_tcp
+ *	function :
+		Open the listen socket, set the necessary options,
+		bind to the address and then listen to the address
+ */
+int svx_listen_tcp (svx_listen *pls) ;
 
 
 #endif

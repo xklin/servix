@@ -1,22 +1,7 @@
 #include "servix_socket.h"
 
-/*	name : svx_sock_isblock
- *	author : klin
- *	para : variable typed svx_socket
- *	function : check if a svx_socket is blocking
- */
-svx_bool
-svx_sock_isblock (svx_socket *psock)
-{
-	return !(psock->m_isnoblock) ;
-}
 
 
-/*	name : svx_sock_setblock
- *	author : klin
- *	para : variable typed svx_socket
- *	function : set a svx_socket to blocking
- */
 int
 svx_sock_setblock (svx_socket *psock)
 {
@@ -29,11 +14,9 @@ svx_sock_setblock (svx_socket *psock)
 }
 
 
-/*	name : svx_sock_setnoblock
- *	author : klin
- *	para : variable typed svx_socket
- *	function : set a svx_socket to no-blocking
- */
+
+
+
 int
 svx_sock_setnoblock (svx_socket *psock)
 {
@@ -47,23 +30,9 @@ svx_sock_setnoblock (svx_socket *psock)
 }
 
 
-/*	name : svx_sock_ispush
- *	author : klin
- *	para : variable typed svx_socket
- *	function : check if a svx_socket is push
- */
-svx_bool
-svx_sock_ispush (svx_socket *psock)
-{
-	return !((svx_bool)psock->m_isnopush) ;
-}
 
 
-/*	name : svx_sock_nopush
- *	author : klin
- *	para : variable typed svx_socket
- *	function : set a svx_socket to no-pushing
- */
+
 int
 svx_sock_setnopush (svx_socket *psock)
 {
@@ -78,11 +47,8 @@ svx_sock_setnopush (svx_socket *psock)
 }
 
 
-/*	name : svx_sock_push
- *	author : klin
- *	para : variable typed svx_socket
- *	function : set a svx_socket to pushing
- */
+
+
 int
 svx_sock_setpush (svx_socket *psock)
 {
@@ -95,11 +61,10 @@ svx_sock_setpush (svx_socket *psock)
 					(const void *) &cork, sizeof(int));
 }
 
-/*	name : svx_sock
- *	author : klin
- *	para : type
- *	function : create a svx_socket
- */
+
+
+
+
 svx_socket *
 svx_sock_create (int type, svx_socket *sock)
 {
@@ -126,15 +91,72 @@ svx_sock_create (int type, svx_socket *sock)
 	memset (sock, 0, sizeof (svx_socket)) ;
 
 	sock->m_sock = socket (AF_INET, _type, 0) ;
+	sock->m_isopen = 1 ;
 	return sock ;
 }
 
 
-/*	name : svx_addrv4_create
- *	author : klin
- *	para : ip_dot, port
- *	function : create a svx_addr
- */
+
+
+svx_errno_t
+svx_sock_destroy (svx_socket *sock)
+{
+	assert (NULL != sock) ;
+
+	if (!sock->m_isopen) {
+		svxe_log (LOG_DEBUG, "socket [%d] is not openning,"
+				"but try to close it", sock->m_sock) ;
+
+		return SVX_DEBUG ;
+	}
+
+	if (0 > close (sock->m_sock)) {
+		svxe_log (LOG_EMGER, "socket [%d] close failed", sock->m_sock) ;
+		return SVX_ERROR ;
+	}
+
+	sock->m_isopen = 0 ;
+	return SVX_NORMAL ;
+}
+
+
+
+
+
+int
+svx_sock_get_sndbuf (svx_socket *psock)
+{
+	int value ;
+
+	if (0 > getsockopt (psock->m_sock, SOL_SOCKET, SO_SNDBUF,
+		(const void*)&value, sizeof (int))) {
+
+		return -1 ;
+	}
+
+	return value ;
+}
+
+
+
+int
+svx_sock_get_rcvbuf (svx_socket *psock)
+{
+	int value ;
+
+	if (0 > getsockopt (psock->m_sock, SOL_SOCKET, SO_RCVBUf,
+			(const void*)&value, sizeof (int))) {
+
+		return -1 ;
+	}
+
+	return value ;
+}
+
+
+
+
+
 svx_addr *
 svx_addrv4_create (const char *ip_dot, int port, svx_addr *addr)
 {
@@ -150,8 +172,10 @@ svx_addrv4_create (const char *ip_dot, int port, svx_addr *addr)
 	addr->m_port = port ;
 	addr->m_family = AF_INET ;
 
-	if (0 > inet_pton (AF_INET, ip_dot, &addr->m_addr.sin_addr))
-		svxe_exit () ;
+	if (0 > inet_pton (AF_INET, ip_dot, &addr->m_addr.sin_addr)) {
+		svxe_log (LOG_EMGER, "inet_pton() the address %s failed", ip_dot) ;
+		return -1 ;
+	}
 
 	addr->m_addr.sin_family = addr->m_family ;
 	addr->m_addr.sin_port = htons (port) ;

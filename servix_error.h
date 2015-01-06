@@ -21,4 +21,9 @@ void	svxe_log (int, const char *,...) ;
 #define LOG_INFO	6	// The program should print some informations
 #define LOG_TRACE	7	// The program should traceing the running route
 
+
+#define	SVX_ERROR	1
+#define SVX_DEBUG	2
+#define SVX_NORMAL	3
+
 #endif
